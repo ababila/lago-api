@@ -232,6 +232,12 @@ module Clockwork
       .perform_later
   end
 
+  every(5.minutes, "schedule:rearm_ipay_polls") do
+    Clock::RearmIpayPollsJob
+      .set(sentry: {"slug" => "lago_rearm_ipay_polls", "cron" => "*/5 * * * *"})
+      .perform_later
+  end
+
   every(1.hour, "schedule:process_dunning_campaigns", at: "*:45") do
     Clock::ProcessDunningCampaignsJob
       .set(sentry: {"slug" => "lago_process_dunning_campaigns", "cron" => "45 */1 * * *"})

@@ -29,6 +29,40 @@ RSpec.describe Invoices::Payments::GeneratePaymentUrlService do
       end
     end
 
+    context "when payment provider is ipay" do
+      let(:provider) { "ipay" }
+      let(:code) { "ipay_1" }
+      let(:payment_provider) { create(:ipay_provider, code:, organization:) }
+      let(:provider_customer) { create(:ipay_customer, payment_provider:, customer:) }
+      let(:invoice) { create(:invoice, customer:, currency: "XOF", total_amount_cents: 1500) }
+      let(:page_url) { "https://i-pay.money/external_payments/5cd8447270f6/preview" }
+
+      before do
+        stub_request(:post, "https://i-pay.money/api/v1/external_payments")
+          .to_return(status: 200, body: {status: "initiated", page_url:}.to_json)
+      end
+
+      it "returns the link, cached on a payment intent that expires before it" do
+        freeze_time do
+          result = generate_payment_url_service.call
+
+          expect(result.payment_url).to eq(page_url)
+          expect(PaymentIntent.sole).to have_attributes(
+            invoice:,
+            payment_url: page_url,
+            expires_at: 20.minutes.from_now
+          )
+        end
+      end
+
+      it "returns the same link while the payment intent is active" do
+        first_url = generate_payment_url_service.call.payment_url
+
+        expect(described_class.new(invoice:).call.payment_url).to eq(first_url)
+        expect(WebMock).to have_requested(:post, "https://i-pay.money/api/v1/external_payments").once
+      end
+    end
+
     context "when invoice is blank" do
       it "returns an error" do
         result = described_class.new(invoice: nil).call

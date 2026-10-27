@@ -49,6 +49,27 @@ describe Clockwork do
     end
   end
 
+  describe "schedule:rearm_ipay_polls" do
+    let(:job) { "schedule:rearm_ipay_polls" }
+    let(:start_time) { Time.zone.parse("1 Apr 2022 00:01:00") }
+    let(:end_time) { Time.zone.parse("1 Apr 2022 00:31:00") }
+
+    it "enqueues a job re-arming the i-pay polls" do
+      Clockwork::Test.run(
+        file: clock_file,
+        start_time:,
+        end_time:,
+        tick_speed: 1.second
+      )
+
+      expect(Clockwork::Test).to be_ran_job(job)
+      expect(Clockwork::Test.times_run(job)).to eq(6)
+
+      Clockwork::Test.block_for(job).call
+      expect(Clock::RearmIpayPollsJob).to have_been_enqueued
+    end
+  end
+
   describe "schedule:activate_subscriptions" do
     let(:job) { "schedule:activate_subscriptions" }
     let(:start_time) { Time.zone.parse("1 Apr 2022 00:01:00") }

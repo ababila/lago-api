@@ -98,6 +98,7 @@ module Types
     field :add_cashfree_payment_provider, mutation: Mutations::PaymentProviders::Cashfree::Create
     field :add_flutterwave_payment_provider, mutation: Mutations::PaymentProviders::Flutterwave::Create
     field :add_gocardless_payment_provider, mutation: Mutations::PaymentProviders::Gocardless::Create
+    field :add_ipay_payment_provider, mutation: Mutations::PaymentProviders::Ipay::Create
     field :add_moneyhash_payment_provider, mutation: Mutations::PaymentProviders::Moneyhash::Create
     field :add_stripe_payment_provider, mutation: Mutations::PaymentProviders::Stripe::Create
 
@@ -105,6 +106,7 @@ module Types
     field :update_cashfree_payment_provider, mutation: Mutations::PaymentProviders::Cashfree::Update
     field :update_flutterwave_payment_provider, mutation: Mutations::PaymentProviders::Flutterwave::Update
     field :update_gocardless_payment_provider, mutation: Mutations::PaymentProviders::Gocardless::Update
+    field :update_ipay_payment_provider, mutation: Mutations::PaymentProviders::Ipay::Update
     field :update_moneyhash_payment_provider, mutation: Mutations::PaymentProviders::Moneyhash::Update
     field :update_stripe_payment_provider, mutation: Mutations::PaymentProviders::Stripe::Update
 

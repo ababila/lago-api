@@ -308,6 +308,37 @@ RSpec.describe Resolvers::PaymentProvidersResolver do
     end
   end
 
+  context "when type is ipay" do
+    let(:ipay_provider) { create(:ipay_provider, organization:) }
+    let(:query) do
+      <<~GQL
+        query {
+          paymentProviders(limit: 5, type: ipay) {
+            collection {
+              ... on IpayProvider {
+                id
+                __typename
+              }
+            }
+          }
+        }
+      GQL
+    end
+
+    before { ipay_provider }
+
+    it "returns the i-pay providers only" do
+      result = execute_graphql(
+        current_user: membership.user,
+        current_organization: organization,
+        permissions: required_permission,
+        query:
+      )
+
+      expect(result["data"]["paymentProviders"]["collection"]).to eq([{"id" => ipay_provider.id, "__typename" => "IpayProvider"}])
+    end
+  end
+
   context "when a MoneyHash provider has no api key" do
     let(:moneyhash_provider) { create(:moneyhash_provider, organization:) }
     let(:query) do

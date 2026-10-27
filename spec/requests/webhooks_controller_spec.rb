@@ -439,4 +439,46 @@ RSpec.describe WebhooksController do
       end
     end
   end
+
+  describe "POST /ipay" do
+    let(:organization) { create(:organization) }
+    let(:ipay_provider) { create(:ipay_provider, organization:, webhook_secret: "webhook_secret_hash") }
+    let(:customer) { create(:customer, organization:, payment_provider: "ipay") }
+    let(:reference) { SecureRandom.hex(16) }
+    let(:payment_intent) do
+      create(:payment_intent, invoice: create(:invoice, organization:, customer:), provider_session_id: reference)
+    end
+    let(:body) do
+      {data: {reference: "xq7sm5hqakoh", status: "succeeded", amount: 1500, external_payment_reference: reference}}
+    end
+
+    before do
+      ipay_provider
+      payment_intent
+    end
+
+    it "refreshes the link the webhook names" do
+      post(
+        "/webhooks/ipay/#{organization.id}?code=#{ipay_provider.code}",
+        params: body.to_json,
+        headers: {"Content-Type" => "application/json", "Secret-Hash" => "webhook_secret_hash"}
+      )
+
+      expect(response).to have_http_status(:success)
+      expect(PaymentProviders::Ipay::PaymentIntents::RefreshJob).to have_been_enqueued.with(payment_intent)
+    end
+
+    context "when the secret is wrong" do
+      it "returns bad request" do
+        post(
+          "/webhooks/ipay/#{organization.id}?code=#{ipay_provider.code}",
+          params: body.to_json,
+          headers: {"Content-Type" => "application/json", "Secret-Hash" => "wrong"}
+        )
+
+        expect(response).to have_http_status(:bad_request)
+        expect(PaymentProviders::Ipay::PaymentIntents::RefreshJob).not_to have_been_enqueued
+      end
+    end
+  end
 end

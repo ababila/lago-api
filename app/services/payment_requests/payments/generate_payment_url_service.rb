@@ -7,7 +7,8 @@ module PaymentRequests
 
       include Customers::PaymentProviderFinder
 
-      PROVIDER_GOCARDLESS = "gocardless"
+      # GoCardless has no hosted payment page, and i-pay links only pay invoices.
+      UNSUPPORTED_PROVIDERS = %w[gocardless ipay].freeze
 
       def initialize(payable:)
         @payable = payable
@@ -18,7 +19,7 @@ module PaymentRequests
 
       def call
         return result.single_validation_failure!(error_code: "no_linked_payment_provider") if provider.blank?
-        return result.single_validation_failure!(error_code: "invalid_payment_provider") if gocardless_provider?
+        return result.single_validation_failure!(error_code: "invalid_payment_provider") if unsupported_provider?
         return result.single_validation_failure!(error_code: "invalid_payment_status") if payable.payment_succeeded?
 
         if current_payment_provider.blank?
@@ -51,8 +52,8 @@ module PaymentRequests
 
       delegate :customer, to: :payable
 
-      def gocardless_provider?
-        provider == PROVIDER_GOCARDLESS
+      def unsupported_provider?
+        UNSUPPORTED_PROVIDERS.include?(provider)
       end
 
       def current_payment_provider_customer

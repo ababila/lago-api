@@ -79,6 +79,7 @@ Rails.application.routes.draw do
     post "cashfree/:organization_id", to: "webhooks#cashfree", on: :collection, as: :cashfree
     post "flutterwave/:organization_id", to: "webhooks#flutterwave", on: :collection, as: :flutterwave
     post "gocardless/:organization_id", to: "webhooks#gocardless", on: :collection, as: :gocardless
+    post "ipay/:organization_id", to: "webhooks#ipay", on: :collection, as: :ipay
     post "adyen/:organization_id", to: "webhooks#adyen", on: :collection, as: :adyen
     post "moneyhash/:organization_id", to: "webhooks#moneyhash", on: :collection, as: :moneyhash
   end

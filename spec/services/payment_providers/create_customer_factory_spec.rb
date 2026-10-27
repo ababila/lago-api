@@ -56,5 +56,14 @@ RSpec.describe PaymentProviders::CreateCustomerFactory do
         expect(new_instance).to be_instance_of(PaymentProviders::Flutterwave::Customers::CreateService)
       end
     end
+
+    context "when provider is ipay" do
+      let(:provider) { "ipay" }
+      let(:payment_provider_id) { create(:ipay_provider, organization: customer.organization).id }
+
+      it "creates an instance of the ipay service" do
+        expect(new_instance).to be_instance_of(PaymentProviders::Ipay::Customers::CreateService)
+      end
+    end
   end
 end

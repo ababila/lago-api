@@ -27,7 +27,7 @@ RSpec.shared_examples "a lago diagnostics report" do
   end
 
   it "lists every payment provider and integration" do
-    %w[Adyen Cashfree Flutterwave Gocardless Moneyhash Stripe].each do |name|
+    %w[Adyen Cashfree Flutterwave Gocardless Ipay Moneyhash Stripe].each do |name|
       expect(report).to match(/^    #{Regexp.escape(name)}\s+: (enabled|disabled)$/)
     end
 

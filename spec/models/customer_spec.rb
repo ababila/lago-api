@@ -812,6 +812,17 @@ RSpec.describe Customer do
         expect(customer.provider_customer).to eq(gocardless_customer)
       end
     end
+
+    context "when payment provider is ipay" do
+      let(:payment_provider) { "ipay" }
+      let(:ipay_customer) { create(:ipay_customer, customer:) }
+
+      before { ipay_customer }
+
+      it "returns the ipay provider customer object" do
+        expect(customer.provider_customer).to eq(ipay_customer)
+      end
+    end
   end
 
   describe "#payment_connection_status" do

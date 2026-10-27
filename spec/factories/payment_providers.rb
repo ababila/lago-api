@@ -120,4 +120,24 @@ FactoryBot.define do
       webhook_secret { SecureRandom.hex(32) }
     end
   end
+
+  factory :ipay_provider, class: "PaymentProviders::IpayProvider" do
+    organization
+    type { "PaymentProviders::IpayProvider" }
+    name { "i-pay" }
+    code { "ipay_#{SecureRandom.uuid}" }
+    secrets do
+      {secret_key:, webhook_secret:}.to_json
+    end
+
+    settings do
+      {success_redirect_url:}
+    end
+
+    transient do
+      secret_key { "sk_sandbox_#{SecureRandom.hex(16)}" }
+      success_redirect_url { "https://example.com/billing/return" }
+      webhook_secret { SecureRandom.hex(32) }
+    end
+  end
 end

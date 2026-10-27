@@ -51,6 +51,18 @@ RSpec.describe PaymentRequests::Payments::GeneratePaymentUrlService do
       end
     end
 
+    context "when payment provider is ipay" do
+      let(:provider) { "ipay" }
+
+      it "returns an error, as i-pay links only pay invoices" do
+        result = generate_payment_url_service.call
+
+        expect(result).not_to be_success
+        expect(result.error).to be_a(BaseService::ValidationFailure)
+        expect(result.error.messages[:base]).to eq(["invalid_payment_provider"])
+      end
+    end
+
     context "when payment request's payment status is invalid" do
       before { payment_request.payment_succeeded! }
 

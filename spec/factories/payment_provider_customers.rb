@@ -53,4 +53,12 @@ FactoryBot.define do
 
     provider_customer_id { SecureRandom.uuid }
   end
+
+  factory :ipay_customer, class: "PaymentProviderCustomers::IpayCustomer" do
+    customer
+    organization { customer.organization }
+    payment_provider { association(:ipay_provider, organization: organization) }
+
+    provider_customer_id { nil }
+  end
 end

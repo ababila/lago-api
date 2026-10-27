@@ -597,6 +597,20 @@ input AddGocardlessPaymentProviderInput {
 }
 
 """
+i-pay input arguments
+"""
+input AddIpayPaymentProviderInput {
+  """
+  A unique identifier for the client performing the mutation.
+  """
+  clientMutationId: String
+  code: String!
+  name: String!
+  secretKey: String!
+  successRedirectUrl: String
+}
+
+"""
 Moneyhash input arguments
 """
 input AddMoneyhashPaymentProviderInput {
@@ -8258,6 +8272,15 @@ type InvoicedUsageCollection {
   metadata: CollectionMetadata!
 }
 
+type IpayProvider {
+  code: String!
+  id: ID!
+  name: String!
+  secretKey: ObfuscatedString
+  successRedirectUrl: String
+  webhookSecret: String
+}
+
 """
 Metadata key-value pair
 """
@@ -8679,6 +8702,16 @@ type Mutation {
     """
     input: AddGocardlessPaymentProviderInput!
   ): GocardlessProvider
+
+  """
+  Add i-pay payment provider
+  """
+  addIpayPaymentProvider(
+    """
+    Parameters for AddIpayPaymentProvider
+    """
+    input: AddIpayPaymentProviderInput!
+  ): IpayProvider
 
   """
   Add Moneyhash payment provider
@@ -10733,6 +10766,16 @@ type Mutation {
   ): InvoiceCustomSection
 
   """
+  Update i-pay payment provider
+  """
+  updateIpayPaymentProvider(
+    """
+    Parameters for UpdateIpayPaymentProvider
+    """
+    input: UpdateIpayPaymentProviderInput!
+  ): IpayProvider
+
+  """
   Update a membership
   """
   updateMembership(
@@ -11426,7 +11469,7 @@ enum PaymentMethodTypeEnum {
   provider
 }
 
-union PaymentProvider = AdyenProvider | CashfreeProvider | FlutterwaveProvider | GocardlessProvider | MoneyhashProvider | StripeProvider
+union PaymentProvider = AdyenProvider | CashfreeProvider | FlutterwaveProvider | GocardlessProvider | IpayProvider | MoneyhashProvider | StripeProvider
 
 """
 PaymentProviderCollection type
@@ -12349,6 +12392,7 @@ enum ProviderTypeEnum {
   cashfree
   flutterwave
   gocardless
+  ipay
   moneyhash
   stripe
 }
@@ -16275,6 +16319,23 @@ input UpdateInvoiceInput {
   id: ID!
   metadata: [InvoiceMetadataInput!]
   paymentStatus: InvoicePaymentStatusTypeEnum
+}
+
+"""
+Update input arguments
+"""
+input UpdateIpayPaymentProviderInput {
+  """
+  A unique identifier for the client performing the mutation.
+  """
+  clientMutationId: String
+  code: String
+  flowId: String
+  id: ID!
+  name: String
+  requireTermsOfServiceConsent: Boolean
+  successRedirectUrl: String
+  supports3ds: Boolean
 }
 
 """

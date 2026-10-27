@@ -6,5 +6,7 @@
 # Use this to limit dissemination of sensitive information.
 # See the ActiveSupport::ParameterFilter documentation for supported notations and behaviors.
 Rails.application.config.filter_parameters += [
-  :passw, :email, :secret, :token, :_key, :crypt, :salt, :certificate, :otp, :ssn, :secret_key, :siwx
+  :passw, :email, :secret, :token, :_key, :crypt, :salt, :certificate, :otp, :ssn, :secret_key, :siwx,
+  # Payer details that i-pay sends back with a payment, and the link reference that reads them
+  :msisdn, :customer_name, :external_payment_reference
 ]

@@ -12,6 +12,7 @@ module Api
         adyen_customer
         flutterwave_customer
         moneyhash_customer
+        ipay_customer
       ].freeze
 
       # REST names of the settings the shared services read from `billing_configuration`.

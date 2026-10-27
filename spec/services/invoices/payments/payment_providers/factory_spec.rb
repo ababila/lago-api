@@ -55,5 +55,13 @@ RSpec.describe Invoices::Payments::PaymentProviders::Factory do
         expect(factory_service).to eq(Invoices::Payments::FlutterwaveService)
       end
     end
+
+    context "when ipay" do
+      let(:payment_provider) { "ipay" }
+
+      it "returns correct class" do
+        expect(factory_service).to eq(Invoices::Payments::IpayService)
+      end
+    end
   end
 end
